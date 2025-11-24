@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/david-phaser-speckit-demo-claude/',
   root: './',
   publicDir: 'public',
   build: {
