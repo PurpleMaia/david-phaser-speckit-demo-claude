@@ -16,6 +16,7 @@ export class MainScene extends Phaser.Scene {
       dialogOpen: false,
       currentInteractable: null
     };
+    this.wasMoving = false; // Track movement state for tween management
   }
 
   // T028: Check proximity between player and target
@@ -209,12 +210,30 @@ export class MainScene extends Phaser.Scene {
                      this.wasd.A.isDown || this.wasd.D.isDown ||
                      this.wasd.W.isDown || this.wasd.S.isDown;
 
-    // Pause idle animation when moving, resume when idle
-    if (isMoving) {
-      this.playerIdleTween.pause();
-    } else {
-      this.playerIdleTween.resume();
+    // Manage idle animation tween based on movement state transitions
+    if (isMoving && !this.wasMoving) {
+      // Started moving: stop and remove the tween
+      if (this.playerIdleTween) {
+        this.playerIdleTween.stop();
+        this.playerIdleTween.remove();
+      }
+    } else if (!isMoving && this.wasMoving) {
+      // Stopped moving: create new tween at current position
+      if (this.playerIdleTween) {
+        this.playerIdleTween.stop();
+        this.playerIdleTween.remove();
+      }
+      this.playerIdleTween = this.tweens.add({
+        targets: this.player,
+        y: this.player.y - 4,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
     }
+
+    this.wasMoving = isMoving;
 
     // T023-T024: Implement movement logic for arrow keys and WASD
     if (this.cursors.left.isDown || this.wasd.A.isDown) {
