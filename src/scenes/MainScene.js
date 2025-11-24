@@ -117,13 +117,15 @@ export class MainScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     // Phase 2 - T018: Add idle animation for player (subtle bob)
-    this.tweens.add({
+    // Store reference to control the tween during movement
+    this.playerIdleTween = this.tweens.add({
       targets: this.player,
       y: this.player.y - 4,  // 4px upward offset
       duration: 1000,        // 1 second cycle
       yoyo: true,            // Return to start position
       repeat: -1,            // Infinite loop
-      ease: 'Sine.easeInOut' // Smooth motion
+      ease: 'Sine.easeInOut', // Smooth motion
+      paused: false
     });
 
     // T020: Create static wall group and add walls
@@ -200,6 +202,19 @@ export class MainScene extends Phaser.Scene {
 
     // Stop player movement by default
     this.player.setVelocity(0);
+
+    // Check if any movement key is pressed
+    const isMoving = this.cursors.left.isDown || this.cursors.right.isDown ||
+                     this.cursors.up.isDown || this.cursors.down.isDown ||
+                     this.wasd.A.isDown || this.wasd.D.isDown ||
+                     this.wasd.W.isDown || this.wasd.S.isDown;
+
+    // Pause idle animation when moving, resume when idle
+    if (isMoving) {
+      this.playerIdleTween.pause();
+    } else {
+      this.playerIdleTween.resume();
+    }
 
     // T023-T024: Implement movement logic for arrow keys and WASD
     if (this.cursors.left.isDown || this.wasd.A.isDown) {
