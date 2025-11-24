@@ -101,7 +101,7 @@ export class MainScene extends Phaser.Scene {
     };
 
     Object.entries(assets).forEach(([key, svgString]) => {
-      this.load.svg(key, svgToDataUri(svgString));
+      this.load.image(key, svgToDataUri(svgString));
     });
   }
 
