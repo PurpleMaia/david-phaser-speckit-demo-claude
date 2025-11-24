@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
-import { createPlayerSvg } from '../svg/player.js';
-import { createNpcSvg } from '../svg/npc.js';
-import { createChestSvg } from '../svg/chest.js';
-import { createWallSvg } from '../svg/wall.js';
+import { createPlayerSvg } from '../svg/sprites/createPlayerSvg.js';
+import { createNpcSvg } from '../svg/sprites/createNpcSvg.js';
+import { createChestSvg } from '../svg/sprites/createChestSvg.js';
+import { createWallTileSvg } from '../svg/sprites/createWallTileSvg.js';
 import { svgToDataUri } from '../utils/svgLoader.js';
+import { svgToTexture } from '../utils/textureLoader.js';
 
 export class MainScene extends Phaser.Scene {
   constructor() {
@@ -95,7 +96,7 @@ export class MainScene extends Phaser.Scene {
     // Load SVG assets as data URIs
     const assets = {
       'player': createPlayerSvg(),
-      'wall': createWallSvg(),
+      'wall': createWallTileSvg(),
       'npc': createNpcSvg(),
       'chest': createChestSvg()
     };
@@ -114,6 +115,16 @@ export class MainScene extends Phaser.Scene {
 
     // T019: Enable player collision with world bounds
     this.player.setCollideWorldBounds(true);
+
+    // Phase 2 - T018: Add idle animation for player (subtle bob)
+    this.tweens.add({
+      targets: this.player,
+      y: this.player.y - 4,  // 4px upward offset
+      duration: 1000,        // 1 second cycle
+      yoyo: true,            // Return to start position
+      repeat: -1,            // Infinite loop
+      ease: 'Sine.easeInOut' // Smooth motion
+    });
 
     // T020: Create static wall group and add walls
     this.walls = this.physics.add.staticGroup();
@@ -143,6 +154,16 @@ export class MainScene extends Phaser.Scene {
     this.npc = this.add.sprite(500, 200, 'npc');
     this.npc.interactionRadius = 60;
     this.npc.dialogText = "Hello, traveler! Welcome to this demo world.";
+
+    // Phase 2 - T019: Add idle animation for NPC (subtle bob, same as player)
+    this.tweens.add({
+      targets: this.npc,
+      y: this.npc.y - 4,     // 4px upward offset
+      duration: 1000,        // 1 second cycle
+      yoyo: true,            // Return to start position
+      repeat: -1,            // Infinite loop
+      ease: 'Sine.easeInOut' // Smooth motion
+    });
 
     // T030: Initialize dialog box (hidden)
     this.dialogBox = this.createDialogBox();

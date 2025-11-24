@@ -1,24 +1,25 @@
 <!--
 Sync Impact Report
 ==================
-Version: 0.0.0 → 1.0.0 (Initial ratification)
+Version: 1.0.0 → 1.1.0 (Visual Style Guide Added)
 
 Added Sections:
-- All core principles (5 total)
-- Technical Constraints section
-- Development Workflow section
-- Governance section
+- Visual Style Guide (Phase 2: Visual Polish) as subsection under Principle III
 
-Modified Principles: N/A (initial version)
+Modified Principles:
+- Principle III expanded with detailed visual design constraints and implementation approach
+- Added guidance for "simple but charming" aesthetic (early Zelda/SNES vibes)
+- Specified color palette limits (10-16 colors), shading constraints (one darker shade per base color)
+- Emphasized parametric, reusable SVG generators over one-off drawings
 
 Files Updated:
 - ✅ .specify/memory/constitution.md (this file)
-- ✅ .specify/templates/plan-template.md (Constitution Check section updated with specific checklist)
-- ✅ .specify/templates/spec-template.md (Added Visual Assets section with SVG constraints)
-- ✅ .specify/templates/tasks-template.md (Added Phaser-specific examples and testing note)
-- ✅ README.md (Updated with constitution summary and project structure)
+- ⏳ .specify/templates/spec-template.md (should update Visual Assets section to reference style guide)
+- ⏳ .specify/templates/plan-template.md (Constitution Check should verify visual style compliance)
 
-Follow-up TODOs: None
+Follow-up TODOs:
+- Consider updating spec template to reference new visual style constraints
+- Consider updating plan template Constitution Check to include visual style verification
 -->
 
 # Phaser 3 SpecKit Demo Constitution
@@ -67,6 +68,23 @@ strictly prohibited.
 **Rationale**: Code-generated SVGs eliminate asset management complexity, keep the repository
 lightweight, ensure reproducibility, and align with the experimental/demo nature of the
 project.
+
+#### Visual Style Guide (Phase 2: Visual Polish)
+
+Target aesthetic: **"simple but charming"** — early Zelda/SNES vibes with modern clarity.
+
+**Design Constraints:**
+- **Clean silhouettes**: Player, NPCs, and environment elements MUST have clear, readable shapes
+- **Color contrast**: Player, NPCs, and environment MUST be visually distinct through color choices
+- **Tiny color palette**: Use 10–16 total colors maximum across the entire game
+- **Soft outlines and simple shading**: Each base color gets ONE darker shade for depth (no gradients, no complex lighting)
+
+**Implementation Approach:**
+- **Prefer parametric, reusable SVG generators** over one-off drawings
+  - Example: `createCharacterSvg({ bodyColor, accessoryColor, emotion })`
+  - This aligns with code-first asset generation and reduces duplication
+- **Mechanics and code clarity still beat visual effects**: Don't add particle systems, animations, or effects that complicate the codebase unless they serve gameplay
+- Visual polish MUST NOT compromise Principle I (Simplicity First) or Principle II (Minimal Dependencies)
 
 ### IV. Local-First Execution
 
@@ -165,4 +183,4 @@ This constitution uses semantic versioning (MAJOR.MINOR.PATCH):
 - **MINOR**: New principles added, materially expanded guidance
 - **PATCH**: Clarifications, wording improvements, typo fixes
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-24 | **Last Amended**: 2025-11-24
+**Version**: 1.1.0 | **Ratified**: 2025-11-24 | **Last Amended**: 2025-11-24
