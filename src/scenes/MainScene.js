@@ -5,6 +5,9 @@ import { createChestSvg } from '../svg/sprites/createChestSvg.js';
 import { createWallTileSvg } from '../svg/sprites/createWallTileSvg.js';
 import { svgToDataUri } from '../utils/svgLoader.js';
 import { svgToTexture } from '../utils/textureLoader.js';
+import { PlayerInput } from '../input/PlayerInput.js';
+import { VirtualControls } from '../ui/VirtualControls.js';
+import { detectDevice } from '../utils/deviceDetector.js';
 
 export class MainScene extends Phaser.Scene {
   constructor() {
@@ -108,6 +111,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
+    // Phase 3 - T019: Add multi-touch pointer support (up to 5 simultaneous touches)
+    this.input.addPointer(4);
+
     // T017: Create physics world bounds
     this.physics.world.setBounds(0, 0, 800, 600);
 
@@ -144,14 +150,19 @@ export class MainScene extends Phaser.Scene {
     // T021: Add collision between player and walls
     this.physics.add.collider(this.player, this.walls);
 
-    // T022: Set up keyboard input
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.wasd = this.input.keyboard.addKeys({
-      W: Phaser.Input.Keyboard.KeyCodes.W,
-      A: Phaser.Input.Keyboard.KeyCodes.A,
-      S: Phaser.Input.Keyboard.KeyCodes.S,
-      D: Phaser.Input.Keyboard.KeyCodes.D
-    });
+    // Phase 3 - T024: Detect device and create virtual controls if needed
+    const device = detectDevice({ forceShow: false });
+    this.virtualControls = device.shouldShowControls
+      ? new VirtualControls(this, { visible: true, buttonSize: 48, margin: 20 })
+      : null;
+
+    // Phase 3 - T024: Create virtual control buttons
+    if (this.virtualControls) {
+      this.virtualControls.create();
+    }
+
+    // Phase 3 - T024: Create unified PlayerInput with virtual controls
+    this.playerInput = new PlayerInput(this, this.virtualControls);
 
     // T027: Create NPC sprite
     this.npc = this.add.sprite(500, 200, 'npc');
@@ -172,10 +183,6 @@ export class MainScene extends Phaser.Scene {
     this.dialogBox = this.createDialogBox();
     this.dialogBox.setVisible(false);
 
-    // T031: Set up interaction keys
-    this.interactKey = this.input.keyboard.addKey('E');
-    this.spaceKey = this.input.keyboard.addKey('SPACE');
-
     // T041: Create interactive object (chest)
     this.chest = this.add.sprite(200, 400, 'chest');
     this.chest.interactionRadius = 60;
@@ -183,6 +190,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   update() {
+    // Phase 3 - T007: Update PlayerInput state
+    this.playerInput.update();
+
     // T033: Check proximity to NPC
     const nearNPC = this.checkProximity(this.player, this.npc);
     // T042: Check proximity to chest (only if not collected)
@@ -190,9 +200,8 @@ export class MainScene extends Phaser.Scene {
     // T045: Prioritize NPC over chest when both are nearby
     this.gameState.currentInteractable = nearNPC ? this.npc : (nearChest ? this.chest : null);
 
-    // T037: Handle interaction key press
-    if (Phaser.Input.Keyboard.JustDown(this.interactKey) ||
-        Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+    // Phase 3 - T007: Handle interaction using PlayerInput
+    if (this.playerInput.isActionJustPressed()) {
       this.handleInteraction();
     }
 
@@ -201,14 +210,9 @@ export class MainScene extends Phaser.Scene {
       return;
     }
 
-    // Stop player movement by default
-    this.player.setVelocity(0);
-
-    // Check if any movement key is pressed
-    const isMoving = this.cursors.left.isDown || this.cursors.right.isDown ||
-                     this.cursors.up.isDown || this.cursors.down.isDown ||
-                     this.wasd.A.isDown || this.wasd.D.isDown ||
-                     this.wasd.W.isDown || this.wasd.S.isDown;
+    // Phase 3 - T007: Get movement vector from PlayerInput
+    const movement = this.playerInput.getMovementVector();
+    const isMoving = movement.x !== 0 || movement.y !== 0;
 
     // Manage idle animation tween based on movement state transitions
     if (isMoving && !this.wasMoving) {
@@ -235,17 +239,11 @@ export class MainScene extends Phaser.Scene {
 
     this.wasMoving = isMoving;
 
-    // T023-T024: Implement movement logic for arrow keys and WASD
-    if (this.cursors.left.isDown || this.wasd.A.isDown) {
-      this.player.setVelocityX(-160);
-    } else if (this.cursors.right.isDown || this.wasd.D.isDown) {
-      this.player.setVelocityX(160);
-    }
-
-    if (this.cursors.up.isDown || this.wasd.W.isDown) {
-      this.player.setVelocityY(-160);
-    } else if (this.cursors.down.isDown || this.wasd.S.isDown) {
-      this.player.setVelocityY(160);
+    // Phase 3 - T007: Apply movement based on input vector
+    if (isMoving) {
+      this.player.setVelocity(movement.x * 160, movement.y * 160);
+    } else {
+      this.player.setVelocity(0, 0);
     }
   }
 }

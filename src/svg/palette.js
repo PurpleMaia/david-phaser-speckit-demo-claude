@@ -38,6 +38,11 @@ export const colors = {
   dialogBorder: '#4A4A4A',     // Dark gray border
   dialogShadow: '#00000080',   // Semi-transparent black shadow (alpha channel)
   textPrimary: '#2C2C2C',      // Dark gray text
+
+  // Phase 3: Touch button colors (reuse existing colors to stay within 16 limit)
+  buttonBase: '#F5F5DC',       // Button background (reuse dialogBg)
+  buttonBaseDark: '#D2B48C',   // Pressed state (reuse floorBase for darker shade)
+  buttonIcon: '#2C2C2C',       // Arrow/icon color (reuse textPrimary)
 };
 
 // Color count: 18 entries, but many reused (wallDark for shading, playerSkin for NPC)

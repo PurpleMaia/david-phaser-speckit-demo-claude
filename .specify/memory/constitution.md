@@ -1,25 +1,28 @@
 <!--
 Sync Impact Report
 ==================
-Version: 1.0.0 → 1.1.0 (Visual Style Guide Added)
+Version: 1.1.0 → 1.2.0 (Cross-Platform Playability Added)
 
 Added Sections:
-- Visual Style Guide (Phase 2: Visual Polish) as subsection under Principle III
+- Principle VI: Cross-Platform Playability (Phase 3: Mobile/Touch Controls)
 
 Modified Principles:
-- Principle III expanded with detailed visual design constraints and implementation approach
-- Added guidance for "simple but charming" aesthetic (early Zelda/SNES vibes)
-- Specified color palette limits (10-16 colors), shading constraints (one darker shade per base color)
-- Emphasized parametric, reusable SVG generators over one-off drawings
+- New principle added ensuring keyboard controls remain primary while adding touch support
+- Specified on-screen control design constraints aligned with existing visual style
+- Clarified conflict resolution: keep both usable, mobile may be slightly simpler
 
 Files Updated:
 - ✅ .specify/memory/constitution.md (this file)
-- ⏳ .specify/templates/spec-template.md (should update Visual Assets section to reference style guide)
-- ⏳ .specify/templates/plan-template.md (Constitution Check should verify visual style compliance)
+- ⏳ .specify/templates/spec-template.md (should reference cross-platform requirements)
+- ⏳ .specify/templates/plan-template.md (Constitution Check should verify control compatibility)
 
 Follow-up TODOs:
-- Consider updating spec template to reference new visual style constraints
-- Consider updating plan template Constitution Check to include visual style verification
+- Consider updating spec template to include Input Methods section for mobile/desktop
+- Consider updating plan template Constitution Check to verify keyboard controls remain intact
+
+Previous Changes (v1.0.0 → 1.1.0):
+- Added Visual Style Guide as subsection under Principle III
+- Specified color palette, shading, and SVG generation approach
 -->
 
 # Phaser 3 SpecKit Demo Constitution
@@ -110,6 +113,23 @@ Project organization MUST follow standard conventions for modern JavaScript web 
 **Rationale**: Standard structure makes the project immediately familiar to developers,
 reduces cognitive load, and demonstrates best practices for SpecKit-managed projects.
 
+### VI. Cross-Platform Playability
+
+The game MUST remain fully playable with keyboard controls on desktop while also supporting
+touch controls on mobile devices.
+
+- Keyboard controls MUST remain the primary input method and MUST NOT be degraded
+- Touch controls MUST be added as an additional input method for mobile devices
+- On-screen controls MUST be visually simple and consistent with the SVG style guide
+- On-screen controls SHOULD avoid covering the main gameplay area more than necessary
+- Control UI MUST prefer clarity and reliability over fancy UI effects
+- When conflicts arise between mobile UX and desktop UX, both MUST remain usable
+- Mobile controls MAY be slightly simpler than desktop controls when necessary
+
+**Rationale**: Cross-platform support expands accessibility without compromising the core
+desktop experience. Simple, reliable touch controls align with the Simplicity First principle
+while making the demo playable on a wider range of devices.
+
 ## Technical Constraints
 
 ### Toolchain
@@ -183,4 +203,4 @@ This constitution uses semantic versioning (MAJOR.MINOR.PATCH):
 - **MINOR**: New principles added, materially expanded guidance
 - **PATCH**: Clarifications, wording improvements, typo fixes
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-24 | **Last Amended**: 2025-11-24
+**Version**: 1.2.0 | **Ratified**: 2025-11-24 | **Last Amended**: 2025-11-24
